@@ -1,0 +1,2 @@
+rootProject.name = 'printer_controller_pr3'
+include ':libs'
