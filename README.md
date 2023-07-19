@@ -25,7 +25,7 @@ You can download it from (https://drive.google.com/file/d/1pT3PYhWltPql44V0YFpJe
 
 # Step 2:
 
-- Add ('include ':hsm-android-print') to android/settings.gradle
+- Add ('include ':libs') to android/settings.gradle
 
 # Step 3:
 
