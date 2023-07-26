@@ -28,8 +28,34 @@ class PrinterControllerPr3 {
     return PrinterControllerPr3Platform.instance.writeGraphicBase64(aBase64Image, aRotation, aXOffset, aWidth, aHeight);
   }
 
-  Future<dynamic> writeTicket(String ticketDesign) {
-    return PrinterControllerPr3Platform.instance.writeTicket(ticketDesign);
+  Future<dynamic> printPenaltyTicket({
+    required String printerName,
+    required String printerAddress,
+    required String journeyNo,
+    required String boardingStation,
+    required String landingStation,
+    required String passengerId,
+    required String passengerName,
+    required String penaltyDate,
+    required String penaltyType,
+    required String penaltyAmount,
+    required String description,
+    required String issuedBy,
+  }) {
+    return PrinterControllerPr3Platform.instance.printPenaltyTicket(
+      printerName: printerName,
+      printerAddress: printerAddress,
+      journeyNo: journeyNo,
+      boardingStation: boardingStation,
+      landingStation: landingStation,
+      passengerId: passengerId,
+      passengerName: passengerName,
+      penaltyDate: penaltyDate,
+      penaltyType: penaltyType,
+      penaltyAmount: penaltyAmount,
+      description: description,
+      issuedBy: issuedBy,
+    );
   }
 
   Future<dynamic> setBold(bool isTrue) {

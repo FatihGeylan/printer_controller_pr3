@@ -49,9 +49,33 @@ class MethodChannelPrinterControllerPr3 extends PrinterControllerPr3Platform {
   }
 
   @override
-  Future writeTicket(String ticketDesign) async {
-    return await methodChannel.invokeMethod('WriteTicket', {
-      "ticketDesign": ticketDesign,
+  Future printPenaltyTicket({
+    required String printerName,
+    required String printerAddress,
+    required String journeyNo,
+    required String boardingStation,
+    required String landingStation,
+    required String passengerId,
+    required String passengerName,
+    required String penaltyDate,
+    required String penaltyType,
+    required String penaltyAmount,
+    required String description,
+    required String issuedBy,
+  }) async {
+    return await methodChannel.invokeMethod('printPenaltyTicket', {
+      "printerId": printerName,
+      "printerUri": printerAddress,
+      "journeyNo": journeyNo,
+      "boardingStation": boardingStation,
+      "landingStation": landingStation,
+      "passengerId": passengerId,
+      "passengerName": passengerName,
+      "penaltyDate": penaltyDate,
+      "penaltyType": penaltyType,
+      "penaltyAmount": penaltyAmount,
+      "description": description,
+      "issuedBy": issuedBy,
     });
   }
 

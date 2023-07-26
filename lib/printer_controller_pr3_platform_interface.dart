@@ -39,7 +39,21 @@ abstract class PrinterControllerPr3Platform extends PlatformInterface {
   Future<dynamic> writeGraphicBase64(String aBase64Image, int aRotation, int aXOffset, int aWidth, int aHeight) =>
       throw UnimplementedError('Has not been implemented.');
 
-  Future<dynamic> writeTicket(String ticketDesign) => throw UnimplementedError('Has not been implemented.');
+  Future<dynamic> printPenaltyTicket({
+    required String printerName,
+    required String printerAddress,
+    required String journeyNo,
+    required String boardingStation,
+    required String landingStation,
+    required String passengerId,
+    required String passengerName,
+    required String penaltyDate,
+    required String penaltyType,
+    required String penaltyAmount,
+    required String description,
+    required String issuedBy,
+  }) =>
+      throw UnimplementedError('Has not been implemented.');
 
   Future<dynamic> setBold(bool isTrue) => throw UnimplementedError('Has not been implemented.');
 
