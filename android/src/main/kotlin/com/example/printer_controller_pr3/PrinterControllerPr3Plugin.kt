@@ -15,7 +15,6 @@ import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
 import com.honeywell.mobility.print.*
-import com.honeywell.mobility.print.Printer.ExtraSettings
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 
@@ -28,7 +27,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
   private lateinit var channel : MethodChannel
   private lateinit var context : Context
   private lateinit var activity: Activity
-  var lp: LinePrinter? = null
+  var mLinePrinter: LinePrinter? = null
   private var jsonCmdAttribStr: String? = null
   private val TAG = "MyActivity"
   var sResult: String? = null
@@ -92,7 +91,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
         }
     }
     else if (call.method == "isConnected"){
-      return result.success(lp != null)
+      return result.success(mLinePrinter != null)
     }
 
     else if (call.method == "Write"){
@@ -341,7 +340,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
 
     override fun doInBackground(vararg args: Int?): String? {
       try{
-        lp?.close()
+        mLinePrinter?.close()
       }catch (ex: Exception){
         cResult = "Unexpected exception: " + ex.message
       }
@@ -354,7 +353,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
     override fun doInBackground(vararg args: Boolean?): String? {
       val isTrue = args[0]
       try{
-        lp?.setBold(isTrue!!)
+        mLinePrinter?.setBold(isTrue!!)
       }catch (ex: Exception){
         sbResult = "Unexpected exception: " + ex.message
       }
@@ -366,7 +365,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
     override fun doInBackground(vararg args: Boolean?): String? {
       val isTrue = args[0]
       try{
-        lp?.setCompress(isTrue!!)
+        mLinePrinter?.setCompress(isTrue!!)
       }catch (ex: Exception){
         scResult = "Unexpected exception: " + ex.message
       }
@@ -378,7 +377,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
     override fun doInBackground(vararg args: Boolean?): String? {
       val isTrue = args[0]
       try{
-        lp?.setItalic(isTrue!!)
+        mLinePrinter?.setItalic(isTrue!!)
       }catch (ex: Exception){
         siResult = "Unexpected exception: " + ex.message
       }
@@ -390,7 +389,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
     override fun doInBackground(vararg args: Boolean?): String? {
       val isTrue = args[0]
       try{
-        lp?.setUnderline(isTrue!!)
+        mLinePrinter?.setUnderline(isTrue!!)
       }catch (ex: Exception){
         siResult = "Unexpected exception: " + ex.message
       }
@@ -402,7 +401,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
     override fun doInBackground(vararg args: Boolean?): String? {
       val isTrue = args[0]
       try{
-        lp?.setStrikeout(isTrue!!)
+        mLinePrinter?.setStrikeout(isTrue!!)
       }catch (ex: Exception){
         siResult = "Unexpected exception: " + ex.message
       }
@@ -414,7 +413,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
     override fun doInBackground(vararg args: Boolean?): String? {
       val isTrue = args[0]
       try{
-        lp?.setDoubleHigh(isTrue!!)
+        mLinePrinter?.setDoubleHigh(isTrue!!)
       }catch (ex: Exception){
         sdhResult = "Unexpected exception: " + ex.message
       }
@@ -426,7 +425,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
     override fun doInBackground(vararg args: Boolean?): String? {
       val isTrue = args[0]
       try{
-        lp?.setDoubleWide(isTrue!!)
+        mLinePrinter?.setDoubleWide(isTrue!!)
       }catch (ex: Exception){
         sdwResult = "Unexpected exception: " + ex.message
       }
@@ -438,8 +437,8 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
 
     override fun doInBackground(vararg args: Int?): String? {
       try{
-        Log.d(TAG,"${lp?.bytesWritten.toString()} bytes has written." )
-        lp?.disconnect()
+        Log.d(TAG,"${mLinePrinter?.bytesWritten.toString()} bytes has written." )
+        mLinePrinter?.disconnect()
       }catch (ex: Exception){
         nResult = "Unexpected exception: " + ex.message
       }
@@ -456,9 +455,9 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
       val aHeight = args[4]
 
       try{
-        lp?.newLine(1)
-        lp?.writeGraphicBase64(aBase64Image, aRotation!!.toInt(), aXOffset!!.toInt(), aWidth!!.toInt(), aHeight!!.toInt())
-        lp?.newLine(1)
+        mLinePrinter?.newLine(1)
+        mLinePrinter?.writeGraphicBase64(aBase64Image, aRotation!!.toInt(), aXOffset!!.toInt(), aWidth!!.toInt(), aHeight!!.toInt())
+        mLinePrinter?.newLine(1)
       }catch (ex: Exception){
         wgResult = "Unexpected exception: " + ex.message
         Log.d(TAG, wgResult!!)
@@ -472,7 +471,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
     override fun doInBackground(vararg args: Int?): String? {
       val index = args[0]
       try{
-        lp?.newLine(index!!)
+        mLinePrinter?.newLine(index!!)
       }catch (ex: Exception){
         nResult = "Unexpected exception: " + ex.message
       }
@@ -484,7 +483,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
     override fun doInBackground(vararg args: String?): String? {
       val index = args[0]
       try{
-        lp?.write(index)
+        mLinePrinter?.write(index)
 //                lp?.newLine(1)
       }catch (ex: Exception){
         wResult = "Unexpected exception: " + ex.message
@@ -536,7 +535,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
       Log.d(TAG, blPrinterUri)
       Log.d(TAG, PrinterID)
       try {
-        lp = LinePrinter(
+        mLinePrinter = LinePrinter(
           jsonCmdAttribStr,
           PrinterID,
           blPrinterUri,
@@ -544,7 +543,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
         )
 
         // Registers to listen for the print progress events.
-        lp?.addPrintProgressListener(progressListener)
+        mLinePrinter?.addPrintProgressListener(progressListener)
 
 
         //A retry sequence in case the bluetooth socket is temporarily not ready
@@ -552,18 +551,18 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
         val maxretry = 2
         while (numtries < maxretry) {
           try {
-            lp?.connect() // Connects to the printer
+            mLinePrinter?.connect() // Connects to the printer
             break
           } catch (ex: LinePrinterException) {
             numtries++
             Thread.sleep(1000)
           }
         }
-        if (numtries == maxretry) lp?.connect() //Final retry
+        if (numtries == maxretry) mLinePrinter?.connect() //Final retry
 
         // Check the state of the printer and abort printing if there are
         // any critical errors detected.
-        val results: IntArray? = lp?.status
+        val results: IntArray? = mLinePrinter?.status
         if (results != null) {
           for (err in results.indices) {
             if (results[err] == 223) {
@@ -576,7 +575,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
           }
         }
       } catch (ex: Exception) {
-        if (lp != null) {
+        if (mLinePrinter != null) {
           Log.d(TAG, ex.message!!)
          //lp?.removePrintProgressListener(progressListener) // Stop listening for printer events.
         }
@@ -587,7 +586,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
 
       } finally {
         try {
-          if (lp != null)
+          if (mLinePrinter != null)
             Log.d(TAG, "Connection Succesful!")
           //lp?.disconnect()
         } catch (e: PrinterException) {
