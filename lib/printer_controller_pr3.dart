@@ -5,8 +5,9 @@ class PrinterControllerPr3 {
     return PrinterControllerPr3Platform.instance.getPlatformVersion();
   }
 
-  Future<dynamic> createPrinter(String printerID, String printerUri) {
-    return PrinterControllerPr3Platform.instance.createPrinter(printerID, printerUri);
+  //Example: createPrinter(printerName: "PrinterName", printerAddress: "00:11:22:33:44:55");
+  Future<dynamic> createPrinter({required String printerName, required String printerAddress}) {
+    return PrinterControllerPr3Platform.instance.createPrinter(printerName, printerAddress);
   }
 
   Future<dynamic> write(String index) {
@@ -17,6 +18,12 @@ class PrinterControllerPr3 {
     return PrinterControllerPr3Platform.instance.newLine(lineSpace);
   }
 
+  // PRINT IMAGE FUNCTION
+  //BASE64 CODE OF THE IMAGE
+  // ROTATION DEGREE MUST BE 0,90,180 OR 270
+  // OFFSET FROM THE LEFT HAND SIDE OF THE PAGE
+  // GRAPHIC WIDTH
+  // GRAPHIC HEIGHT
   Future<dynamic> writeGraphicBase64(String aBase64Image, int aRotation, int aXOffset, int aWidth, int aHeight) {
     return PrinterControllerPr3Platform.instance.writeGraphicBase64(aBase64Image, aRotation, aXOffset, aWidth, aHeight);
   }
@@ -55,6 +62,10 @@ class PrinterControllerPr3 {
 
   Future<dynamic> disconnect() {
     return PrinterControllerPr3Platform.instance.disconnect();
+  }
+
+  Future<dynamic> isConnected() {
+    return PrinterControllerPr3Platform.instance.isConnected();
   }
 
   Future<dynamic> close() {

@@ -16,10 +16,10 @@ class MethodChannelPrinterControllerPr3 extends PrinterControllerPr3Platform {
   }
 
   @override
-  Future createPrinter(String PrinterID, String PrinterUri) async {
+  Future createPrinter(String printerID, String printerUri) async {
     return await methodChannel.invokeMethod('CreatePrinter', {
-      "PrinterID": PrinterID,
-      "PrinterUri": PrinterUri,
+      "PrinterID": printerID,
+      "PrinterUri": printerUri,
     });
   }
 
@@ -53,6 +53,11 @@ class MethodChannelPrinterControllerPr3 extends PrinterControllerPr3Platform {
     return await methodChannel.invokeMethod('WriteTicket', {
       "ticketDesign": ticketDesign,
     });
+  }
+
+  @override
+  Future isConnected() async {
+    return await methodChannel.invokeMethod('isConnected');
   }
 
   @override

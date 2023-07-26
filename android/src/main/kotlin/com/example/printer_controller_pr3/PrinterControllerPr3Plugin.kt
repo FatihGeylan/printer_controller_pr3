@@ -3,7 +3,6 @@ package com.example.printer_controller_pr3
 import android.app.Activity
 import android.content.res.AssetManager
 import android.content.Context
-import android.content.Intent
 import android.os.AsyncTask
 import android.os.Build
 import android.util.Log
@@ -12,13 +11,11 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.MethodChannel.Result
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
 import com.honeywell.mobility.print.*
 import com.honeywell.mobility.print.Printer.ExtraSettings
-import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 
@@ -44,6 +41,16 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
   var siResult: String? = null
   var sdwResult: String? = null
   var sdhResult: String? = null
+  var journeyNo: String? = null
+  var boardingStation: String? = null
+  var landingStation: String? = null
+  var passengerId: String? = null
+  var passengerName: String? = null
+  var penaltyDate: String? = null
+  var penaltyType: String? = null
+  var penaltyAmount: String? = null
+  var description: String? = null
+  var issuedBy: String? = null
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "IntermecPrint")
@@ -51,19 +58,41 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
     context = flutterPluginBinding.applicationContext
   }
 
-  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
     if (call.method == "getPlatformVersion") {
       result.success("Android ${Build.VERSION.RELEASE}")
     }
-    if (call.method == "CreatePrinter"){
-      val PrinterID: String? = call.argument<String>("PrinterID")
-      val PrinterUri: String? = call.argument<String>("PrinterUri")
+    else if(call.method == "printPenaltyTicket"){
+      val printerID: String? = call.argument<String>("printerID")
+      val printerUri: String? = call.argument<String>("printerUri")
+      journeyNo = call.argument<String>("journeyNo")
+      boardingStation = call.argument<String>("boardingStation")
+      landingStation = call.argument<String>("landingStation")
+      passengerId = call.argument<String>("passengerId")
+      passengerName = call.argument<String>("passengerName")
+      penaltyDate = call.argument<String>("penaltyDate")
+      penaltyType = call.argument<String>("penaltyType")
+      penaltyAmount = call.argument<String>("penaltyAmount")
+      description = call.argument<String>("description")
+      issuedBy = call.argument<String>("issuedBy")
 
-      if (PrinterUri != null) {
-        if (PrinterID != null) {
-          PrinterTask().execute(PrinterID,PrinterUri)
+      PrintPenaltyTicketTask().execute(printerID,printerUri)
+    }
+    else if (call.method == "CreatePrinter"){
+      val printerID: String? = call.argument<String>("PrinterID")
+      val printerUri: String? = call.argument<String>("PrinterUri")
+
+      if (printerUri != null && printerID != null) {
+        //try {
+          PrinterTask().execute(printerID,printerUri)
+          //result.success(res)
+          //} catch (e: Exception){
+          //return result.error(e.toString(), e.message, e.localizedMessage)
+          // }
         }
-      }
+    }
+    else if (call.method == "isConnected"){
+      return result.success(lp != null)
     }
 
     else if (call.method == "Write"){
@@ -92,11 +121,6 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
           aBase64Image, aRotation.toString(), aXOffset.toString(), aWidth.toString(), aHeight.toString()
         )
       }
-    }
-    else if (call.method == "WriteTicket"){
-      val ticketDesign: String? = call.argument<String>("ticketDesign")
-
-      WriteTicketTask().execute(ticketDesign)
     }
 
     else if (call.method == "Disconnect"){
@@ -156,6 +180,160 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
   class BadPrinterStateException(message: String?) : Exception(message) {
     companion object {
       const val serialVersionUID: Long = 1
+    }
+  }
+
+  inner class PrintPenaltyTicketTask : AsyncTask<String, Int, String>(){
+
+    override fun doInBackground(vararg args: String): String? {
+      val printerID = args[0]
+      var printerUri = args[1]
+
+      readAssetFiles()
+
+      if ((!printerUri!!.contains(":")) && printerUri.length == 12) {
+        val addressChars = CharArray(17)
+        var i = 0
+        var j = 0
+        while (i < 12) {
+          printerUri.toCharArray(addressChars, j, i, i + 2)
+          j += 2
+          if (j < 17) {
+            addressChars[j++] = ':'
+          }
+          i += 2
+        }
+        printerUri = String(addressChars)
+      }
+      val blPrinterUri = "bt://$printerUri"
+
+      val exSettings = LinePrinter.ExtraSettings()
+      exSettings.setContext(context)
+
+      val progressListener: PrintProgressListener = object : PrintProgressListener {
+        override fun receivedStatus(aEvent: PrintProgressEvent) {
+          // Publishes updates on the UI thread.
+          Log.d(TAG, aEvent.getMessageType().toString())
+        }
+      }
+      Log.d(TAG, blPrinterUri)
+      Log.d(TAG, printerID)
+      try {
+        mLinePrinter = LinePrinter(
+          jsonCmdAttribStr,
+          printerID,
+          blPrinterUri,
+          exSettings
+        )
+
+        // Registers to listen for the print progress events.
+        mLinePrinter?.addPrintProgressListener(progressListener)
+
+
+        //A retry sequence in case the bluetooth socket is temporarily not ready
+        var numtries = 0
+        val maxretry = 2
+        while (numtries < maxretry) {
+          try {
+            mLinePrinter?.connect() // Connects to the printer
+            break
+          } catch (ex: LinePrinterException) {
+            numtries++
+            Thread.sleep(1000)
+          }
+        }
+        if (numtries == maxretry) mLinePrinter?.connect() //Final retry
+
+        // Check the state of the printer and abort printing if there are
+        // any critical errors detected.
+        val results: IntArray? = mLinePrinter?.status
+        if (results != null) {
+          for (err in results.indices) {
+            if (results[err] == 223) {
+              // Paper out.
+              throw BadPrinterStateException("Paper out")
+            } else if (results[err] == 227) {
+              // Lid open.
+              throw BadPrinterStateException("Printer lid open")
+            }
+          }
+        }
+        printTicket()
+        sResult = "Number of bytes sent to printer: " + mLinePrinter?.bytesWritten
+
+      } catch (ex: Exception) {
+        if (mLinePrinter != null) {
+          Log.d(TAG, ex.message!!)
+          mLinePrinter?.removePrintProgressListener(progressListener) // Stop listening for printer events.
+        }
+
+        sResult = "Unexpected exception: " + ex.message
+        Log.d(TAG, sResult!!)
+        Log.d(TAG, ex.stackTraceToString())
+
+      } finally {
+        try {
+          if (mLinePrinter != null)
+            Log.d(TAG, "Connection Succesful!")
+          //lp?.disconnect()
+        } catch (e: PrinterException) {
+          e.printStackTrace()
+          Log.e(TAG, " Error! LP object is null")
+        }
+      }
+      return sResult
+    }
+
+  }
+
+  private fun printTicket(){
+    try {
+      mLinePrinter?.newLine(4)
+
+      mLinePrinter?.writeGraphicBase64(
+        // TRC Logo base64
+        Constants.TRC_LOGO,
+        LinePrinter.GraphicRotationDegrees.DEGREE_0,
+        180, // Offset in printhead dots from the left of the page
+        220, // Desired graphic width on paper in printhead dots
+        70 // Desired graphic height on paper in printhead dots
+      )
+      mLinePrinter?.newLine(1)
+      mLinePrinter?.write("                 SHIRIKA LA TELI TANZANIA         ")
+      mLinePrinter?.newLine(2)
+      mLinePrinter?.setBold(true)
+
+      mLinePrinter?.write("Journey No : $journeyNo")
+      mLinePrinter?.newLine(2)
+
+      mLinePrinter?.write("Journey Name : $boardingStation - $landingStation")
+      mLinePrinter?.newLine(2)
+
+      mLinePrinter?.write("PassengerID : $passengerId")
+      mLinePrinter?.newLine(2)
+
+      mLinePrinter?.write("PassengerName : $passengerName")
+      mLinePrinter?.newLine(2)
+
+      mLinePrinter?.write("PenaltyDate: $penaltyDate")
+      mLinePrinter?.newLine(2)
+
+      mLinePrinter?.write("PenaltyType: $penaltyType")
+      mLinePrinter?.newLine(2)
+
+      mLinePrinter?.write("PenaltyAmount: $penaltyAmount")
+      mLinePrinter?.newLine(2)
+
+      mLinePrinter?.write("Description: $description")
+      mLinePrinter?.newLine(2)
+
+      mLinePrinter?.write("Issued By: $issuedBy")
+      mLinePrinter?.newLine(3)
+      mLinePrinter?.newLine(4)
+      mLinePrinter?.disconnect()
+
+    } catch (ex: Exception) {
+      Log.v("TAG", "${ex.message}")
     }
   }
 
@@ -400,7 +578,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
       } catch (ex: Exception) {
         if (lp != null) {
           Log.d(TAG, ex.message!!)
-          lp?.removePrintProgressListener(progressListener) // Stop listening for printer events.
+         //lp?.removePrintProgressListener(progressListener) // Stop listening for printer events.
         }
 
         sResult = "Unexpected exception: " + ex.message
@@ -439,61 +617,6 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
         PrintProgressEvent.MessageTypes.STARTDOC -> Log.d(TAG,PROGRESS_START_DOC_MSG)
         else -> Log.d(TAG,PROGRESS_NONE_MSG)
       }
-    }
-  }
-  inner class WriteTicketTask : AsyncTask<String, Int, String>() {
-    override fun doInBackground(vararg args: String?): String? {
-      val ticketDesign = args[0]
-      try{
-        lp?.newLine(4)
-
-        lp?.writeGraphicBase64(
-          // TRC Logo base64
-          ticketDesign,
-          LinePrinter.GraphicRotationDegrees.DEGREE_0,
-          180, // Offset in printhead dots from the left of the page
-          220, // Desired graphic width on paper in printhead dots
-          70 // Desired graphic height on paper in printhead dots
-        )
-        lp?.newLine(1)
-        lp?.write("                 SHIRIKA LA TELI TANZANIA         ")
-        lp?.newLine(2)
-
-        lp?.setBold(true)
-
-        lp?.write("Trip No" + " : " + "TrainID")
-        lp?.newLine(2)
-
-        lp?.write("Journey Name" + " : " + "Station name" + " - " + "Landing station name")
-        lp?.newLine(2)
-
-        lp?.write("PassengerID" + " : " + "PenaltyID")
-        lp?.newLine(2)
-
-        lp?.write("PassengerName" + " : " + "Username")
-        lp?.newLine(2)
-
-        lp?.write("PenaltyDate: Time-TrainID")
-        lp?.newLine(2)
-
-        lp?.write("PenaltyType: PenaltyReason")
-        lp?.newLine(2)
-
-        lp?.write("PenaltyAmount: X TL")
-        lp?.newLine(2)
-
-        //val description = if(activity_penalty_dialog_description_edt.text.toString().isEmpty()) "-" else activity_penalty_dialog_description_edt.text.toString()
-        lp?.write("Description: Penalty Description" )
-        lp?.newLine(2)
-
-        lp?.write("Issued By: " + "IssuedByXXX")
-        lp?.newLine(3)
-        lp?.newLine(4)
-
-      }catch (ex: Exception){
-        wResult = "Unexpected exception: " + ex.message
-      }
-      return wResult
     }
   }
 

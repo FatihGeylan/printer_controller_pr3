@@ -63,8 +63,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     children: [
                       const Text("Match device on bluetooth settings then connect"),
                       ElevatedButton(
-                        onPressed: () {
-                          _printerControllerPr3Plugin.createPrinter(Constants.deviceName, Constants.deviceAddress);
+                        onPressed: () async {
+                          final a = await _printerControllerPr3Plugin.createPrinter(
+                            printerName: Constants.deviceName,
+                            printerAddress: Constants.deviceAddress,
+                          );
+                          print('THİS İS RESULT -- $a');
                         },
                         child: const Text('Connect'),
                       ),
@@ -159,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ElevatedButton(
                         onPressed: () {
                           _printerControllerPr3Plugin.write(_writeController.text);
-                          _printerControllerPr3Plugin.newLine(1);
+                          _printerControllerPr3Plugin.newLine(2);
                         },
                         child: const Text("Write")),
                   ],
@@ -290,6 +294,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 ElevatedButton(
                   onPressed: () => _printerControllerPr3Plugin.close(),
                   child: const Text("Close"),
+                ),
+                const _Divider(),
+                ElevatedButton(
+                  onPressed: () async => print(await _printerControllerPr3Plugin.isConnected()),
+                  child: const Text("Is Connected?"),
                 ),
               ],
             ),

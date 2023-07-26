@@ -27,10 +27,12 @@ abstract class PrinterControllerPr3Platform extends PlatformInterface {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 
-  Future<dynamic> createPrinter(String PrinterID, String PrinterUri) =>
+  Future<dynamic> createPrinter(String printerID, String printerUri) =>
       throw UnimplementedError('Has not been implemented.');
 
   Future<dynamic> write(String index) => throw UnimplementedError('Has not been implemented.');
+
+  Future<dynamic> isConnected() => throw UnimplementedError('Has not been implemented.');
 
   Future<dynamic> newLine(int lineSpace) => throw UnimplementedError('Has not been implemented.');
 
