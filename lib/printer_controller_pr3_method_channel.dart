@@ -53,8 +53,7 @@ class MethodChannelPrinterControllerPr3 extends PrinterControllerPr3Platform {
     required String printerName,
     required String printerAddress,
     required String journeyNo,
-    required String boardingStation,
-    required String landingStation,
+    required String stationsInfo,
     required String passengerId,
     required String passengerName,
     required String penaltyDate,
@@ -67,8 +66,7 @@ class MethodChannelPrinterControllerPr3 extends PrinterControllerPr3Platform {
       "printerId": printerName,
       "printerUri": printerAddress,
       "journeyNo": journeyNo,
-      "boardingStation": boardingStation,
-      "landingStation": landingStation,
+      "stationsInfo": stationsInfo,
       "passengerId": passengerId,
       "passengerName": passengerName,
       "penaltyDate": penaltyDate,
@@ -76,6 +74,33 @@ class MethodChannelPrinterControllerPr3 extends PrinterControllerPr3Platform {
       "penaltyAmount": penaltyAmount,
       "description": description,
       "issuedBy": issuedBy,
+    });
+  }
+
+  @override
+  Future printCitReport({
+    required String printerName,
+    required String printerAddress,
+    required String citReportTitle,
+    required String shiftOpenDate,
+    required String shiftCloseDate,
+    required String totalPenaltyAmount,
+    required String staffInfo,
+    required String gepgNumber,
+    required String billExpireDate,
+    required String signature,
+  }) async {
+    return await methodChannel.invokeMethod('printCitReport', {
+      "printerId": printerName,
+      "printerUri": printerAddress,
+      "citReportTitle": citReportTitle,
+      "shiftOpenDate": shiftOpenDate,
+      "shiftCloseDate": shiftCloseDate,
+      "totalPenaltyAmount": totalPenaltyAmount,
+      "staffInfo": staffInfo,
+      "gepgNumber": gepgNumber,
+      "billExpireDate": billExpireDate,
+      "signature": signature,
     });
   }
 

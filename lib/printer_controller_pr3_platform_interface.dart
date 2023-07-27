@@ -43,8 +43,7 @@ abstract class PrinterControllerPr3Platform extends PlatformInterface {
     required String printerName,
     required String printerAddress,
     required String journeyNo,
-    required String boardingStation,
-    required String landingStation,
+    required String stationsInfo,
     required String passengerId,
     required String passengerName,
     required String penaltyDate,
@@ -52,6 +51,20 @@ abstract class PrinterControllerPr3Platform extends PlatformInterface {
     required String penaltyAmount,
     required String description,
     required String issuedBy,
+  }) =>
+      throw UnimplementedError('Has not been implemented.');
+
+  Future<dynamic> printCitReport({
+    required String printerName,
+    required String printerAddress,
+    required String citReportTitle,
+    required String shiftOpenDate,
+    required String shiftCloseDate,
+    required String totalPenaltyAmount,
+    required String staffInfo,
+    required String gepgNumber,
+    required String billExpireDate,
+    required String signature,
   }) =>
       throw UnimplementedError('Has not been implemented.');
 

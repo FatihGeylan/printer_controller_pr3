@@ -32,8 +32,7 @@ class PrinterControllerPr3 {
     required String printerName,
     required String printerAddress,
     required String journeyNo,
-    required String boardingStation,
-    required String landingStation,
+    required String stationsInfo,
     required String passengerId,
     required String passengerName,
     required String penaltyDate,
@@ -46,8 +45,7 @@ class PrinterControllerPr3 {
       printerName: printerName,
       printerAddress: printerAddress,
       journeyNo: journeyNo,
-      boardingStation: boardingStation,
-      landingStation: landingStation,
+      stationsInfo: stationsInfo,
       passengerId: passengerId,
       passengerName: passengerName,
       penaltyDate: penaltyDate,
@@ -55,6 +53,32 @@ class PrinterControllerPr3 {
       penaltyAmount: penaltyAmount,
       description: description,
       issuedBy: issuedBy,
+    );
+  }
+
+  Future<dynamic> printCitReport({
+    required String printerName,
+    required String printerAddress,
+    required String shiftOpenDate,
+    required String shiftCloseDate,
+    required String totalPenaltyAmount,
+    required String staffInfo,
+    required String gepgNumber,
+    required String billExpireDate,
+    required String signature,
+    required String citReportTitle,
+  }) {
+    return PrinterControllerPr3Platform.instance.printCitReport(
+      printerName: printerName,
+      printerAddress: printerAddress,
+      shiftOpenDate: shiftOpenDate,
+      shiftCloseDate: shiftCloseDate,
+      totalPenaltyAmount: totalPenaltyAmount,
+      staffInfo: staffInfo,
+      gepgNumber: gepgNumber,
+      billExpireDate: billExpireDate,
+      signature: signature,
+      citReportTitle: citReportTitle,
     );
   }
 

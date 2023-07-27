@@ -64,11 +64,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       const Text("Match device on bluetooth settings then connect"),
                       ElevatedButton(
                         onPressed: () async {
-                          final a = await _printerControllerPr3Plugin.createPrinter(
+                          await _printerControllerPr3Plugin.createPrinter(
                             printerName: Constants.deviceName,
                             printerAddress: Constants.deviceAddress,
                           );
-                          print('THİS İS RESULT -- $a');
                         },
                         child: const Text('Connect'),
                       ),
@@ -80,44 +79,41 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const _Divider(),
                 ElevatedButton(
-                    onPressed: () {
-                      //CreatePrinter(Constants.deviceName, "bt://00:1D:DF:58:0D:3D");
-                      _printerControllerPr3Plugin.newLine(4);
-                      _printerControllerPr3Plugin.writeGraphicBase64(Constants.graphic64Code, 0, 180, 220, 70);
-                      _printerControllerPr3Plugin.newLine(1);
-                      _printerControllerPr3Plugin.write("                 Train Ticket         ");
-                      _printerControllerPr3Plugin.newLine(2);
-                      _printerControllerPr3Plugin.setBold(true);
-
-                      _printerControllerPr3Plugin.write("Trip No : TrainID");
-                      _printerControllerPr3Plugin.newLine(2);
-
-                      _printerControllerPr3Plugin.write("Journey Name : Station name - Landing station name");
-                      _printerControllerPr3Plugin.newLine(2);
-
-                      _printerControllerPr3Plugin.write("PassengerID : PenaltyID");
-                      _printerControllerPr3Plugin.newLine(2);
-
-                      _printerControllerPr3Plugin.write("PassengerName : Username");
-                      _printerControllerPr3Plugin.newLine(2);
-
-                      _printerControllerPr3Plugin.write("PenaltyDate: Time-TrainID");
-                      _printerControllerPr3Plugin.newLine(2);
-
-                      _printerControllerPr3Plugin.write("PenaltyType: PenaltyReason");
-                      _printerControllerPr3Plugin.newLine(2);
-
-                      _printerControllerPr3Plugin.write("PenaltyAmount: X TL");
-                      _printerControllerPr3Plugin.newLine(2);
-
-                      _printerControllerPr3Plugin.write("Description: Penalty Description");
-                      _printerControllerPr3Plugin.newLine(2);
-
-                      _printerControllerPr3Plugin.write("Issued By: " "IssuedByXXX");
-                      _printerControllerPr3Plugin.newLine(3);
-                      _printerControllerPr3Plugin.newLine(4);
+                    onPressed: () async {
+                      final a = await _printerControllerPr3Plugin.printPenaltyTicket(
+                        printerName: Constants.deviceName,
+                        printerAddress: Constants.deviceAddress,
+                        journeyNo: 'Journey No: 12',
+                        stationsInfo: 'Journey Name: Dar Es Salaam - Morogoro',
+                        passengerId: 'Passenger ID: 12345678',
+                        passengerName: 'Passenger Name: Fathe',
+                        penaltyDate: 'Penalty Date: 17.11.1998 12:30:22',
+                        penaltyType: 'Penalty Type: Smoking violation',
+                        penaltyAmount: 'Penalty Amount: 100TL',
+                        description: 'Description: Ceza fisi test',
+                        issuedBy: 'Issued By: FATIH GEYLAN',
+                      );
+                      print(a);
                     },
-                    child: const Text("Print Ticket")),
+                    child: const Text("Print Penalty Ticket")),
+                const _Divider(),
+                ElevatedButton(
+                    onPressed: () async {
+                      final a = await _printerControllerPr3Plugin.printCitReport(
+                        printerName: Constants.deviceName,
+                        printerAddress: Constants.deviceAddress,
+                        citReportTitle: 'CIT Report',
+                        shiftOpenDate: 'Shift Open: 17/11/1998 14:05',
+                        shiftCloseDate: 'Shift Close: 27/07/2023 13:51',
+                        totalPenaltyAmount: 'Total Penalty Amount: 1500.0 TZS',
+                        staffInfo: 'TRC Staff Information: Mehmet Fatih Geylan',
+                        gepgNumber: 'GePG Number: 123456789',
+                        billExpireDate: 'Bill Expire Date: 01/01/2025 12:00',
+                        signature: 'Signature',
+                      );
+                      print(a);
+                    },
+                    child: const Text("Print CIT Report")),
                 const _Divider(),
                 ElevatedButton(
                     onPressed: () {
