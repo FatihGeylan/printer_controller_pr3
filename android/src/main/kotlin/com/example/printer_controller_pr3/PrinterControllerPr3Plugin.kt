@@ -373,6 +373,55 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
       mLinePrinter?.newLine(3)
       mLinePrinter?.newLine(4)
 
+
+
+      Thread.sleep(5000)
+
+
+      //Print second ticket
+      mLinePrinter?.newLine(4)
+
+      mLinePrinter?.writeGraphicBase64(
+        // TRC Logo base64
+        Constants.TRC_LOGO,
+        LinePrinter.GraphicRotationDegrees.DEGREE_0,
+        180, // Offset in printhead dots from the left of the page
+        220, // Desired graphic width on paper in printhead dots
+        70 // Desired graphic height on paper in printhead dots
+      )
+      mLinePrinter?.newLine(1)
+      mLinePrinter?.write("       SHIRIKA LA TELI TANZANIA")
+      mLinePrinter?.newLine(2)
+      mLinePrinter?.setBold(true)
+
+      mLinePrinter?.write(journeyNo)
+      mLinePrinter?.newLine(2)
+
+      mLinePrinter?.write(stationsInfo)
+      mLinePrinter?.newLine(2)
+
+      mLinePrinter?.write(passengerId)
+      mLinePrinter?.newLine(2)
+
+      mLinePrinter?.write(passengerName)
+      mLinePrinter?.newLine(2)
+
+      mLinePrinter?.write(penaltyDate)
+      mLinePrinter?.newLine(2)
+
+      mLinePrinter?.write(penaltyType)
+      mLinePrinter?.newLine(2)
+
+      mLinePrinter?.write(penaltyAmount)
+      mLinePrinter?.newLine(2)
+
+      mLinePrinter?.write(description)
+      mLinePrinter?.newLine(2)
+
+      mLinePrinter?.write(issuedBy)
+      mLinePrinter?.newLine(3)
+      mLinePrinter?.newLine(4)
+
       Log.d(TAG,"Number of bytes sent to printer: " + mLinePrinter?.bytesWritten)
 
       Thread.sleep(1500)
