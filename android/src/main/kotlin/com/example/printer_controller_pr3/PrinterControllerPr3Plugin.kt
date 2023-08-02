@@ -390,7 +390,8 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
         70 // Desired graphic height on paper in printhead dots
       )
       mLinePrinter?.newLine(1)
-      mLinePrinter?.write("       SHIRIKA LA TELI TANZANIA")
+      mLinePrinter?.setBold(false)
+      mLinePrinter?.write("                 SHIRIKA LA TELI TANZANIA         ")
       mLinePrinter?.newLine(2)
       mLinePrinter?.setBold(true)
 
