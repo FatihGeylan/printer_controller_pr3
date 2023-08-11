@@ -474,6 +474,9 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
       mLinePrinter?.write(gepgNumber)
       mLinePrinter?.newLine(2)
 
+      mLinePrinter?.write(billExpireDate)
+      mLinePrinter?.newLine(2)
+
       mLinePrinter?.write(signature)
       mLinePrinter?.newLine(8)
 
