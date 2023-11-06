@@ -26,7 +26,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
   /// when the Flutter Engine is detached from the Activity
   private lateinit var channel : MethodChannel
   private lateinit var context : Context
-  private lateinit var activity: Activity
+  private lateinit var activity: Activity?
   var mLinePrinter: LinePrinter? = null
   private var jsonCmdAttribStr: String? = null
   private val TAG = "PrintActivity"
@@ -818,7 +818,7 @@ class PrinterControllerPr3Plugin: FlutterPlugin, MethodCallHandler, ActivityAwar
     }
   }
   override fun onDetachedFromActivity() {
-    TODO("Not yet implemented")
+    activity = null
   }
 
   override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
