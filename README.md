@@ -1,6 +1,6 @@
 # printer_controller_pr3
 
-A new Flutter plugin project.
+(https://pub.dev/packages/printer_controller_pr3)
 
 ## Getting Started
 
